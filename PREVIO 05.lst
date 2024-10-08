@@ -1,0 +1,55 @@
+---------------------------------------------
+OSHONSOFT Z80 ASSEMBLER LISTING
+Line   Addr Opcode      Label   Instruction
+---------------------------------------------
+0001   0000 31 FF 27    INICIO: LD SP,27FFH  ;Inicializa la dirección de la pila
+0002   0003 3E 80       SIGUE: LD A,80H      ;Palabra de control del PPI
+0003   0005 D3 03              OUT (03H),A   ;Configura el puerto de control
+0004   0007             
+0005   0007 1E 08              LD E,08H
+0006   0009 3E 01              LD A,01H      ;Enciende el bit 0 del acumulador
+0007   000B 21 00 20           LD HL,2000H   ;Inicializa la localidad de la variable
+0008   000E 77                 LD (HL),A     ;Guarda el ultimo valor del registro
+0009   000F 7E          CICLO: LD A,(HL)     ;Recupera el valor desde la SRAM
+0010   0010 D3 00              OUT (00H),A   ;Saca el valor por el puerto
+0011   0012 CD 40 00           CALL RETARDO1 ;Consume RETARDO1
+0012   0015 3E 00              LD A,00H      ;Apaga todos los leds del puerto
+0013   0017 D3 00              OUT (00H),A
+0014   0019 CD 4D 00           CALL RETARDO2 ;Consume RETARDO2
+0015   001C CB 06              RLC (HL)      ;Rota el registro a la izquierda
+0016   001E 1D                 DEC E
+0017   001F C2 0F 00           JP NZ,CICLO
+0018   0022             
+0019   0022 1E 08              LD E,08H
+0020   0024 3E 80              LD A,080H     ;Enciende el bit 8 del acumulador
+0021   0026 21 00 20           LD HL,2000H   ;Inicializa la localidad de la variable
+0022   0029 77                 LD (HL),A     ;Guarda el ultimo valor del registro
+0023   002A 7E          CICLO2:LD A,(HL)     ;Recupera el valor desde la SRAM
+0024   002B D3 00              OUT (00H),A   ;Saca el valor por el puerto
+0025   002D CD 40 00           CALL RETARDO1 ;Consume RETARDO1
+0026   0030 3E 00              LD A,00H      ;Apaga todos los leds del puerto
+0027   0032 D3 00              OUT (00H),A
+0028   0034 CD 4D 00           CALL RETARDO2 ;Consume RETARDO2
+0029   0037 CB 0E              RRC (HL)      ;Rota el registro a la derecha
+0030   0039 1D                 DEC E
+0031   003A C2 2A 00           JP NZ,CICLO2
+0032   003D C3 03 00           JP SIGUE
+0033   0040 06 05       RETARDO1: LD B,05H   ;Realiza el consumo de tiempo a traves
+0034   0042 16 20       TIEMPOA:  LD D,020H  ;de un decremento anidado de 2 registros
+0035   0044 15          TIEMPOB:  DEC D      ;B=05 Y D=20
+0036   0045 C2 44 00              JP NZ,TIEMPOB
+0037   0048 05                    DEC B
+0038   0049 C2 42 00              JP NZ,TIEMPOA
+0039   004C C9                    RET
+0040   004D             
+0041   004D 0E 04       RETARDO2: LD C,04H       ;Se repite 5 veces (05H) la subrutina
+0042   004F CD 40 00    SEG2:     CALL RETARDO1  ;RETARDO1
+0043   0052 0D                    DEC C
+0044   0053 C2 4F 00              JP NZ,SEG2
+0045   0056 C9                    RET
+0046   0057             
+0047   0057                       END
+0048   0057             
+0049   0057             
+0050   0057             
+Number of errors = 0
